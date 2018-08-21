@@ -17,7 +17,7 @@
 
 //shared variables
 ///////////////////////////
-unsigned char x = 0x1F;
+unsigned char x = 0x1F; //if nothing is pressed
 unsigned char val = 0x00;
 //////////////////////////
 
