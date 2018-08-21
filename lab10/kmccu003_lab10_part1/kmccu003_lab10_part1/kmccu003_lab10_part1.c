@@ -6,6 +6,7 @@
  */ 
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 //#include <ucr/bit.h>
 #include "keypad.h"
 #include "scheduler.h"
@@ -73,7 +74,7 @@ PC3 4   * | 0 | # | D
 
 //shared variables
 ///////////////////////////
-unsigned char x = 0x00;
+unsigned char x = 0x1F;
 unsigned char val = 0x00;
 //////////////////////////
 
@@ -92,12 +93,17 @@ int keypad(int state) { //keypad SM
 			break;
 		
 		case get:
-			state = init;
+			if(x == 0x1F) {
+				state = init;
+			}
+			else {
+				state = get; //stay
+			}
 			break;
 		
 		default:
 			state = init;
-			x = 0x00;
+			x = 0x1F;
 			break;
 	} //end transitions
 	
@@ -109,7 +115,7 @@ int keypad(int state) { //keypad SM
 		
 		case get:
 			val = x;
-			x = 0x00; //reset
+			x = 0x1F; //reset
 			break;
 			
 		default:
@@ -154,7 +160,7 @@ int main(void)
 	TimerOn();
 	
 	unsigned short i; // Scheduler for-loop iterator
-	unsigned char x;
+	//unsigned char x;
 	
     while(1) {
 
@@ -173,8 +179,8 @@ int main(void)
 	//TimerFlag = 0;
 //} //end scheduler
 
-	x = GetKeypadKey();
-        switch (x) {
+	//x = GetKeypadKey();
+        switch (val) {
             case '\0': PORTB = 0x1F; break; // All 5 LEDs on
             case '1': PORTB = 0x01; break; // hex equivalent
             case '2': PORTB = 0x02; break;
