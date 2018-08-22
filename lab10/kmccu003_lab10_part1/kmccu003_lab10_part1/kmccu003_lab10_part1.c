@@ -1,9 +1,10 @@
-/*
- * kmccu003_lab10_part1.c
- *
- * Created: 8/20/2018 11:52:31 AM
- * Author : ucrcse
- */ 
+/*    Author : Kiana McCullough
+ *    Lab Section: B21
+ *    Assignment: Lab # 10 Exercise # 1
+ *    
+ *    I acknowledge all content contained herein, excluding template or example
+ *    code, is my own original work.
+ */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
