@@ -13,26 +13,30 @@
 #include "bit.h"
 #include "io.h"
 #include "io.c"
+//#include "lcd_8bit_task.h"
+#include "queue.h"
 
-/*unsigned char string[] = {'C', 'S', '1', '2', '0', 'B', ' ',  'i', 's', ' ',  'L', 'e', 'g', 'e', 'n', 'd', '.', '.', '.',  'w', 'a', 'i', 't', ' ', 'f', 'o', 'r', ' ',  'i', 't', ' ', 'D', 'A', 'R', 'Y', '!'};
+
+unsigned char string[] = {'C', 'S', '1', '2', '0', 'B', ' ',  'i', 's', ' ',  'L', 'e', 'g', 'e', 'n', 'd', '.', '.', '.',  'w', 'a', 'i', 't', ' ', 'f', 'o', 'r', ' ',  'i', 't', ' ', 'D', 'A', 'R', 'Y', '!', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
 unsigned char cnt = 1;
-enum States{init} state;*/
+enum States{init} state;
 	
-/*int str_tick(int state) {
+int str_tick(int state) {
 	switch(state) {
 		case init:
 		for (unsigned int i = 1; i <= 16; i++) {
 			LCD_Cursor(i);
 			LCD_WriteData(string[i+cnt-2]);
+			
+			if(cnt+i+1 == 54) { //gets cut off at DAR when 36..
+				cnt = 0; //reset
+			}
 		}
 		cnt++;
 	}
 	
 	return state;
-}*/
-
-
-
+}
 
 
 int main(void)
@@ -43,10 +47,10 @@ int main(void)
 	DDRD = 0xFF; PORTD = 0x00;
 	
 	//Greatest common divisor for all tasks or smallest time unit for tasks.
-	/*unsigned long int GCD = 10;
+	unsigned long int GCD = 15;
 
 	//Recalculate GCD periods for scheduler
-	unsigned long int lcd_period = 10;
+	unsigned long int lcd_period = 15;
 	
 	//Declare an array of tasks
 	static task task1;
@@ -84,15 +88,28 @@ int main(void)
 			while(!TimerFlag);
 			TimerFlag = 0;
 
-	} //end while*/
+	} //end while
 	// Error: Program should not exit!
-	LCD_init();
-	LCD_Cursor(1);
-	LCD_DisplayString(1, "hello world");
-	
 	
 	return 0;
 } //end main
+
+
+/*int main(void) {
+	
+	DDRA = 0xFF; PORTA = 0x00; //outputs
+	DDRD = 0xFF; PORTD = 0x00;
+	
+   // Initializes the LCD display
+   LCD_init();
+   
+   // Starting at position 1 on the LCD screen, writes Hello World
+   LCD_DisplayString(1, "Hello World");
+   
+   while(1) {continue;}
+   
+
+}*/
 
 /*Use the LCD code, along with a button and/or time delay to display the message "CS120B is Legend... wait for it DARY!"
 The string will not fit on the display all at once, so you will need to come up with some way to paginate or scroll the text.

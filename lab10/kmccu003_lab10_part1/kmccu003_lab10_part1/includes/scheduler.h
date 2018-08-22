@@ -11,7 +11,7 @@
 //Functionality - finds the greatest common divisor of two values
 //Parameter: Two long int's to find their GCD
 //Returns: GCD else 0
-unsigned long int findGCD(unsigned long int a, unsigned long int b)
+/*unsigned long int findGCD(unsigned long int a, unsigned long int b)
 {
 	unsigned long int c;
 	while(1){
@@ -21,7 +21,7 @@ unsigned long int findGCD(unsigned long int a, unsigned long int b)
 		b = c;
 	}
 	return 0;
-}
+}*/
 ////////////////////////////////////////////////////////////////////////////////
 //Struct for Tasks represent a running process in our simple real-time operating system
 typedef struct _task{

@@ -36,12 +36,8 @@ int keypad(int state) { //keypad SM
 			break;
 		
 		case get:
-			if(x == 0x1F) {
-				state = init;
-			}
-			else {
-				state = get; //stay
-			}
+			state = init;
+			x = 0x1F;
 			break;
 		
 		default:
@@ -58,7 +54,7 @@ int keypad(int state) { //keypad SM
 		
 		case get:
 			val = x;
-			x = 0x1F; //reset
+			//x = 0x1F; //reset
 			break;
 			
 		default:

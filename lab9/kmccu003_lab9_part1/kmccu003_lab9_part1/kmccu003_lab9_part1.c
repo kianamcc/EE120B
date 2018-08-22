@@ -1,9 +1,10 @@
-/*
- * kmccu003_lab9_part1.c
- *
- * Created: 8/16/2018 1:09:54 PM
- * Author : ucrcse
- */ 
+/*    Author : Kiana McCullough
+ *    Lab Section: B21
+ *    Assignment: Lab # 9 Exercise # 1
+ *    
+ *    I acknowledge all content contained herein, excluding template or example
+ *    code, is my own original work.
+ */
 
 #include <avr/io.h>
 
