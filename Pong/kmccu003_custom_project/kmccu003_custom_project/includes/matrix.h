@@ -1,11 +1,3 @@
-/*
- * matrix.h
- *
- * Created: 3/8/2018 12:24:49 AM
- *  Author: BB
- */ 
-
-
 #ifndef MATRIX_H_
 #define MATRIX_H_
 
