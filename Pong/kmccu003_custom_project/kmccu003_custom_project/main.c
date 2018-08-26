@@ -13,7 +13,9 @@
 #include "bit.h"
 #include "math.h"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned char button = 0x00;
+unsigned char play_flag = 0;
 //unsigned char count = 0;
 enum Menu {init, play, matrix} menu;
 
@@ -55,6 +57,9 @@ void Menu() {
 		
 		case matrix:
 		 matrix_write(1, 28); //p1 paddle in middle
+		 matrix_write(8, 28); //p2 paddle in middle
+		 play_flag = 1;
+		 //matrix_write(4, 8); //ball
 		 break;
 			
 		case play:
@@ -68,6 +73,7 @@ void Menu() {
 	}
 	
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 unsigned char button_right = 0x00;
 unsigned char button_left = 0x00;
@@ -103,7 +109,6 @@ void P1() {
 			}
 			
 			break;
-		
 			
 		case right_press: //execute command then go straight to release
 		
@@ -150,6 +155,10 @@ void P1() {
 			else if(!button_right && button_left) { //left
 				p1_state = left_press;
 			}
+			
+			else if(reset_button) {
+				p1_state = reset;
+			}
 			else {
 				p1_state = press_p1;
 			}
@@ -164,14 +173,15 @@ void P1() {
 			
 	}
 	
-	
 	switch(p1_state) { //actions
 		
 		case wait_p1:
 		break;
 		
+		case press_p1:
+		break;
+		
 		case right_press:
-			matrix_clear();
 
 			if(count_right < 224) {
 				count_right = count_right * 2;
@@ -185,7 +195,6 @@ void P1() {
 			break;
 		
 		case left_press:
-			matrix_clear();
 
 			if(count_right != 7) {
 				count_right = count_right / 2;
@@ -201,24 +210,206 @@ void P1() {
 		case release_p1:
 		break;
 		
-		case reset: //not working
+		case reset: 
 			matrix_clear();
-			matrix_write(1, 224);
+			//matrix_write(1, 224);
+			count_right = 28;
+			matrix_write(1, 28); //p1 paddle in middle
+			matrix_write(8, 28); //p2 paddle in middle
+			//LCD_cursor();
+			//LCD_WriteData(score_p1 + '0');
+			//LCD_cursor();
+			//LCD_WriteData(score_p2 + '0');
 			//LCD_ClearScreen();
 			//LCD_DisplayString(1, "     SCORE:     P1: 1       P2:  0");
 			break;	
 	}	
 } //end player 1
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-enum ball_movement{ball_start} ball_state;
+unsigned char button_right_2 = 0x00;
+unsigned char button_left_2 = 0x00;
+unsigned char reset_button_2 = 0x00;
+unsigned char count_right_2 = 28;
+
+enum player_2{wait_p2, press_p2, right_press_p2, left_press_p2, release_p2, reset_p2} p2_state;
+
+void P2() {
+	
+	reset_button_2 = ~PINC & 0x01; //C0
+	button_right_2 = ~PINC & 0x08; //C3
+	button_left_2 = ~PINC & 0x10; //C4
+	
+	switch(p2_state) { //transitions
+		
+		case wait_p2:
+		if(!button_right_2 && !button_left_2) { //stay until a button is pressed
+			p2_state = wait_p2;
+		}
+		
+		else if(button_right_2 && !button_left_2) {
+			p2_state = right_press_p2;
+		}
+		
+		else if(!button_right_2 && button_left_2) {
+			p2_state = left_press_p2;
+		}
+		
+		else if(reset_button_2) {
+			p2_state = reset_p2;
+		}
+		
+		break;
+		
+		case right_press_p2: //execute command then go straight to release
+		
+			if(reset_button_2) {
+				p2_state = reset_p2;
+			}
+		
+			else {
+				p2_state = release_p2;
+				break;
+			}
+		
+		case left_press_p2:
+		
+			if(reset_button_2) {
+				p2_state = reset_p2;
+			}
+		
+			else {
+				p2_state = release_p2;
+				break;
+			}
+		
+		case release_p2: //wait for next press
+
+			if(!button_right_2 && !button_left_2) { //released
+				p2_state = press_p2;
+			}
+		
+			else if(reset_button_2) {
+				p2_state = reset_p2;
+			}
+		
+			else {
+				p2_state = release_p2;
+			}
+		
+		case press_p2:
+		
+			if(button_right_2 && !button_left_2) { //right
+				p2_state = right_press_p2;
+			}
+		
+			else if(!button_right_2 && button_left_2) { //left
+				p2_state = left_press_p2;
+			}
+			
+			else if(reset_button_2) {
+				p2_state = reset_p2;
+			}
+			
+			else {
+				p2_state = press_p2;
+			}
+			break;
+		
+			case reset_p2:
+			p2_state = wait_p2;
+			break;
+		
+		default:
+		break;
+	}
+	
+	switch(p2_state) { //actions
+		
+		case wait_p2:
+		break;
+		
+		case press_p2:
+		break;
+		
+		case right_press_p2:
+
+			if(count_right_2 < 224) {
+				count_right_2 = count_right_2 * 2;
+				//count_right += count_right;
+				matrix_write(8, count_right_2); //p1 paddle in middle
+			}
+		
+			else if (count_right_2 == 224) {
+				matrix_write(8, 224);
+			}
+			break;
+		
+		case left_press_p2:
+		
+			if(count_right_2 != 7) {
+				count_right_2 = count_right_2 / 2;
+				//count_right += count_right;
+				matrix_write(8, count_right_2); //p1 paddle in middle
+			}
+		
+			else if (count_right_2 == 7) {
+				matrix_write(8, 7);
+			}
+			break;
+		
+		case release_p2:
+		break;
+		
+		case reset_p2:
+			matrix_clear();
+			count_right_2 = 28;
+			matrix_write(1, 28); //p1 paddle in middle
+			matrix_write(8, 28); //p2 paddle in middle
+			//LCD_ClearScreen();
+			//LCD_DisplayString(1, "     SCORE:     P1: 1       P2:  0");
+			break;
+	}
+} //end player 2
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+unsigned char ball_count = 4; //start at 4, 8
+unsigned char x = 4;
+enum ball_movement{init_ball, ball_start} ball_state;
 
 void Ball() {
 	
+	switch(ball_state) { //transitions
+		
+		case init_ball:
+			ball_state = ball_start;
+			break;
+			
+			
+		case ball_start:
+			break;
+			
+	}
 	
-	
+	switch(ball_state) { //actions
+		
+		case init_ball:
+			break;
+			
+		case ball_start: //ball go down towards p1
+			if (play_flag == 1 && ball_count >= 3) { //stops right in front of paddle
+				matrix_write(ball_count, 0);
+				matrix_write(ball_count-1, 8);
+				ball_count -= 1;
+			}
+			break;
+		
+	}	
 	
 } //end ball
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(void)
 {
@@ -233,7 +424,7 @@ int main(void)
 	menu = init;
 	
 	matrix_init();
-	//matrix_write(1, 7);
+	//matrix_write(8, 28);
 	//matrix_write(2, 1);
 	
 	TimerSet(100);
@@ -247,7 +438,7 @@ int main(void)
 	   
 	   Menu();
 	   P1();
-	   //P2
+	   P2();
 	   Ball();
 	   
 	   
