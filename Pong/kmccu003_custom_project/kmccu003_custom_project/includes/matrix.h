@@ -2,6 +2,7 @@
 #define MATRIX_H_
 
 #include <avr/io.h>
+#include <stdbool.h>
 
 #include "bit.h"
 
@@ -39,6 +40,15 @@ void matrix_write(unsigned char x, unsigned char y)
 	MAX7219transmit_data(y);
 	CS_HIGH();
 }
+
+/*bool matrix_write(unsigned char x, unsigned char y)
+{
+	CS_LOW();
+	MAX7219transmit_data(x);
+	MAX7219transmit_data(y);
+	//CS_HIGH();
+}*/
+
 
 void matrix_clear(void)
 {

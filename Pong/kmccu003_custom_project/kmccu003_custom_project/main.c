@@ -79,6 +79,7 @@ unsigned char button_right = 0x00;
 unsigned char button_left = 0x00;
 unsigned char reset_button = 0x00;
 unsigned char count_right = 28;
+unsigned char p1_index = 3;
 
 enum player_1{wait_p1, press_p1, right_press, left_press, release_p1, reset} p1_state;
 
@@ -192,6 +193,7 @@ void P1() {
 			else if (count_right == 224) {
 				matrix_write(1, 224);
 			}
+			p1_index++;
 			break;
 		
 		case left_press:
@@ -205,6 +207,7 @@ void P1() {
 			else if (count_right == 7) {
 				matrix_write(1, 7);
 			}
+			p1_index--;
 			break;
 		
 		case release_p1:
@@ -376,8 +379,10 @@ void P2() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 unsigned char ball_count = 4; //start at 4, 8
+unsigned char ball_top = 8;
+unsigned char ball_index = 0;
 unsigned char x = 4;
-enum ball_movement{init_ball, ball_start} ball_state;
+enum ball_movement{init_ball, ball_start, ball_vertical/*, ball_hit*/} ball_state;
 
 void Ball() {
 	
@@ -389,6 +394,13 @@ void Ball() {
 			
 			
 		case ball_start:
+			if (ball_count <= 2) {
+			ball_state = ball_vertical;
+			}
+			break;
+			
+		case ball_vertical:
+			ball_state = ball_vertical;
 			break;
 			
 	}
@@ -399,12 +411,33 @@ void Ball() {
 			break;
 			
 		case ball_start: //ball go down towards p1
-			if (play_flag == 1 && ball_count >= 3) { //stops right in front of paddle
+			if (play_flag == 1 && ball_count >= 2) { //stops right in front of paddle
+				//for(ball_count; ball_count >= 3; ball_count-=1) {
 				matrix_write(ball_count, 0);
 				matrix_write(ball_count-1, 8);
 				ball_count -= 1;
+				//}
 			}
+			//hit_flag = 1;
 			break;
+			
+			case ball_vertical:
+				if(/*p1_index == ball_count-1*/ ball_count == 2) { //bott
+						for(unsigned int i = ball_count; i <= 6; i+=1) {
+							matrix_write(ball_count, 0);
+							matrix_write(ball_count+1, 8);
+							ball_count += 1;
+					}
+				}
+				else if(ball_count == 7) { //top
+					for(unsigned int k = ball_count; k >= 3; k-=1) {
+						matrix_write(ball_count, 0);
+						matrix_write(ball_count-1, 8);
+						ball_count -= 1;
+					}
+				}
+				break;
+			
 		
 	}	
 	
