@@ -56,8 +56,6 @@ void Menu() {
 			break;  
 		
 		case matrix:
-		 matrix_write(1, 28); //p1 paddle in middle
-		 matrix_write(8, 28); //p2 paddle in middle
 		 play_flag = 1;
 		 //matrix_write(4, 8); //ball
 		 break;
@@ -74,6 +72,18 @@ void Menu() {
 	
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct p1_struct { //type of struct
+	
+	unsigned char y; //coordinates
+	unsigned char x;
+	
+} p1;
+
+void p1_init() {
+	p1.y = 1;
+	p1.x = 28;
+}
 
 unsigned char button_right = 0x00;
 unsigned char button_left = 0x00;
@@ -177,6 +187,7 @@ void P1() {
 	switch(p1_state) { //actions
 		
 		case wait_p1:
+		 p1_init();
 		break;
 		
 		case press_p1:
@@ -184,30 +195,20 @@ void P1() {
 		
 		case right_press:
 
-			if(count_right < 224) {
-				count_right = count_right * 2;
-				//count_right += count_right;
-				matrix_write(1, count_right); //p1 paddle in middle
+			if(p1.x < 224) {
+				p1.x  = p1.x * 2;
 			}
 			
-			else if (count_right == 224) {
-				matrix_write(1, 224);
-			}
-			p1_index++;
+			//matrix_write(p1.y, p1.x);
 			break;
 		
 		case left_press:
 
-			if(count_right != 7) {
-				count_right = count_right / 2;
-				//count_right += count_right;
-				matrix_write(1, count_right); //p1 paddle in middle
+			if(p1.x != 7) {
+				p1.x = p1.x / 2;
 			}
 			
-			else if (count_right == 7) {
-				matrix_write(1, 7);
-			}
-			p1_index--;
+			//matrix_write(p1.y, p1.x);
 			break;
 		
 		case release_p1:
@@ -215,16 +216,9 @@ void P1() {
 		
 		case reset: 
 			matrix_clear();
-			//matrix_write(1, 224);
 			count_right = 28;
-			matrix_write(1, 28); //p1 paddle in middle
-			matrix_write(8, 28); //p2 paddle in middle
-			//LCD_cursor();
-			//LCD_WriteData(score_p1 + '0');
-			//LCD_cursor();
-			//LCD_WriteData(score_p2 + '0');
-			//LCD_ClearScreen();
-			//LCD_DisplayString(1, "     SCORE:     P1: 1       P2:  0");
+			//matrix_write(1, 28); //p1 paddle in middle
+			//matrix_write(8, 28); //p2 paddle in middle
 			break;	
 	}	
 } //end player 1
@@ -234,6 +228,7 @@ unsigned char button_right_2 = 0x00;
 unsigned char button_left_2 = 0x00;
 unsigned char reset_button_2 = 0x00;
 unsigned char count_right_2 = 28;
+
 
 enum player_2{wait_p2, press_p2, right_press_p2, left_press_p2, release_p2, reset_p2} p2_state;
 
@@ -359,6 +354,8 @@ void P2() {
 			else if (count_right_2 == 7) {
 				matrix_write(8, 7);
 			}
+			
+			
 			break;
 		
 		case release_p2:
@@ -378,10 +375,33 @@ void P2() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-unsigned char ball_count = 4; //start at 4, 8
-unsigned char ball_top = 8;
-unsigned char ball_index = 0;
-unsigned char x = 4;
+unsigned char ball_flag = 0;
+
+struct ball_struct { //type of struct
+	
+	unsigned int direction; //0 down, 1 up, 2 right-up, 3 left-up, 4 right-down, 5 left-down
+	unsigned char y; //coordinates
+	unsigned char x;
+	
+} ball;
+
+void ball_init() {
+	
+	ball.direction = 0;
+	ball.y = 5;
+	ball.x = 8;
+}
+
+unsigned char p1_ball_check() {
+	return ball.x & p1.x;
+}
+//unsigned char p2_ball_check() {
+	//return ball.x & p2.x;
+//}
+//unsigned char ball_count = 5; //start at 4, 8
+unsigned char ball_column_index = 5;
+unsigned char ball_row_index = 8;
+
 enum ball_movement{init_ball, ball_start, ball_vertical/*, ball_hit*/} ball_state;
 
 void Ball() {
@@ -389,18 +409,30 @@ void Ball() {
 	switch(ball_state) { //transitions
 		
 		case init_ball:
-			ball_state = ball_start;
+			if (play_flag == 1)
+			{
+				ball_state = ball_start;
+			}
+			else
+			{
+				ball_state = init_ball;
+			}
 			break;
 			
 			
 		case ball_start:
-			if (ball_count <= 2) {
+			if (ball.y <= 2) { //ball near p1
 			ball_state = ball_vertical;
 			}
+			if (ball.y >= 7)
+			{
+				ball_state = ball_vertical;
+			}
+			//ball_state = ball_start;
 			break;
 			
 		case ball_vertical:
-			ball_state = ball_vertical;
+			ball_state = ball_start;
 			break;
 			
 	}
@@ -408,41 +440,67 @@ void Ball() {
 	switch(ball_state) { //actions
 		
 		case init_ball:
+			ball_init();
 			break;
 			
 		case ball_start: //ball go down towards p1
-			if (play_flag == 1 && ball_count >= 2) { //stops right in front of paddle
-				//for(ball_count; ball_count >= 3; ball_count-=1) {
-				matrix_write(ball_count, 0);
-				matrix_write(ball_count-1, 8);
-				ball_count -= 1;
-				//}
+			matrix_write(ball.y, 0);
+			if (ball.direction == 0) { //stops right in front of paddle
+				ball.y -= 1;
 			}
-			//hit_flag = 1;
+			if (ball.direction == 1)
+			{
+				ball.y += 1;
+			}
+			matrix_write(ball.y, ball.x);
 			break;
 			
 			case ball_vertical:
-				if(/*p1_index == ball_count-1*/ ball_count == 2) { //bott
-						for(unsigned int i = ball_count; i <= 6; i+=1) {
-							matrix_write(ball_count, 0);
-							matrix_write(ball_count+1, 8);
-							ball_count += 1;
+				if(ball.y <= 2) { //check player coordinate,
+					if (p1_ball_check())
+					{
+						ball.direction = 1;
+					}
+					else if(ball.y == 1)
+					{
+						matrix_write(ball.y, 0);
+						ball_init();
 					}
 				}
-				else if(ball_count == 7) { //top
-					for(unsigned int k = ball_count; k >= 3; k-=1) {
-						matrix_write(ball_count, 0);
-						matrix_write(ball_count-1, 8);
-						ball_count -= 1;
-					}
+				if (ball.y >= 7)
+				{
+					ball.direction = 0;
 				}
 				break;
-			
 		
 	}	
 	
 } //end ball
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+enum led_matrix{init_led, update} led_state;
+void display()
+{
+	switch(led_state) {
+		case init_led:
+			led_state = update;
+			break;
+			
+		case update:
+			led_state = update;
+			break;
+		
+	}
+	switch(led_state) {
+		case init:
+			break;
+		
+		case update:
+				 matrix_write(p1.y, p1.x); //p1 paddle in middle
+				 matrix_write(ball.y, ball.x); //p2 paddle in middle
+				 break;
+	}
+}
+
 
 int main(void)
 {
@@ -453,12 +511,11 @@ int main(void)
 	DDRA = 0xFF; PORTA = 0x00; //lcd
 	DDRD = 0xFF; PORTD = 0x00; //lcd
 	
-	//LCD_init();
+	unsigned long ball_timer = 100;
+	
 	menu = init;
 	
 	matrix_init();
-	//matrix_write(8, 28);
-	//matrix_write(2, 1);
 	
 	TimerSet(100);
 	TimerOn();
@@ -470,11 +527,18 @@ int main(void)
    while(1) {
 	   
 	   Menu();
+	   
 	   P1();
+	   
 	   P2();
-	   Ball();
 	   
+	   if(ball_timer == 300) {
+		   Ball();
+		   ball_timer = 0;
+	   }
+	   ball_timer += 100;
 	   
+	   display();
 	   
 		while (!TimerFlag);
 		TimerFlag = 0;

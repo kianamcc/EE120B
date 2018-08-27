@@ -6,6 +6,7 @@
 
 #include "bit.h"
 
+//use port b for matrix
 #define DATA_HIGH() PORTB = SetBit(PORTB, 2, 1)
 #define DATA_LOW()  PORTB = SetBit(PORTB, 2, 0)
 #define CS_HIGH()   PORTB = SetBit(PORTB, 1, 1)
@@ -16,11 +17,11 @@
 
 void MAX7219transmit_data(unsigned char data)
 {
-	for (unsigned char i = 0; i < 8; ++i, data <<= 1)
+	for (unsigned char i = 0; i < 8; ++i, data <<= 1) //transmit byte to MAX
 	{
 		CLK_LOW();
 		
-		if (data & 0x80)
+		if (data & 0x80) //upper nibble
 		{
 			DATA_HIGH();
 		}
@@ -33,7 +34,7 @@ void MAX7219transmit_data(unsigned char data)
 	}
 }
 
-void matrix_write(unsigned char x, unsigned char y)
+void matrix_write(unsigned char x, unsigned char y) //turn on led at position
 {
 	CS_LOW();
 	MAX7219transmit_data(x);
@@ -41,16 +42,9 @@ void matrix_write(unsigned char x, unsigned char y)
 	CS_HIGH();
 }
 
-/*bool matrix_write(unsigned char x, unsigned char y)
-{
-	CS_LOW();
-	MAX7219transmit_data(x);
-	MAX7219transmit_data(y);
-	//CS_HIGH();
-}*/
+//bool
 
-
-void matrix_clear(void)
+void matrix_clear(void) //clear led matrix
 {
 	for (unsigned char i = 0; i < 8; ++i)
 	{
@@ -61,11 +55,11 @@ void matrix_clear(void)
 void matrix_init(void)
 {
 	INIT_PORT();
-	matrix_write(0x09, 0);
-	matrix_write(0x0A, 1);
-	matrix_write(0x0B, 7);
-	matrix_write(0x0C, 1);
-	matrix_write(0x0F, 0);
+	matrix_write(0x09, 0); //binary -> led matrix
+	matrix_write(0x0A, 1); //intensity/brightness
+	matrix_write(0x0B, 7); //show all
+	matrix_write(0x0C, 1); //start/power
+	matrix_write(0x0F, 0); //display test
 	matrix_clear();
 }
 
