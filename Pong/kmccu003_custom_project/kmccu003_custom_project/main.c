@@ -57,7 +57,6 @@ void Menu() {
 		
 		case matrix:
 		 play_flag = 1;
-		 //matrix_write(4, 8); //ball
 		 break;
 			
 		case play:
@@ -224,6 +223,19 @@ void P1() {
 } //end player 1
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+struct p2_struct { //type of struct
+	
+	unsigned char y2; //coordinates
+	unsigned char x2;
+	
+} p2;
+
+void p2_init() {
+	p2.y2 = 8;
+	p2.x2 = 28;
+}
+
+
 unsigned char button_right_2 = 0x00;
 unsigned char button_left_2 = 0x00;
 unsigned char reset_button_2 = 0x00;
@@ -325,6 +337,7 @@ void P2() {
 	switch(p2_state) { //actions
 		
 		case wait_p2:
+		p2_init();
 		break;
 		
 		case press_p2:
@@ -332,30 +345,20 @@ void P2() {
 		
 		case right_press_p2:
 
-			if(count_right_2 < 224) {
-				count_right_2 = count_right_2 * 2;
-				//count_right += count_right;
-				matrix_write(8, count_right_2); //p1 paddle in middle
+			if(p2.x2 < 224) {
+				p2.x2  = p2.x2 * 2;
 			}
-		
-			else if (count_right_2 == 224) {
-				matrix_write(8, 224);
-			}
+	
+			//matrix_write(p1.y, p1.x);
 			break;
 		
 		case left_press_p2:
 		
-			if(count_right_2 != 7) {
-				count_right_2 = count_right_2 / 2;
-				//count_right += count_right;
-				matrix_write(8, count_right_2); //p1 paddle in middle
-			}
-		
-			else if (count_right_2 == 7) {
-				matrix_write(8, 7);
+			if(p2.x2 != 7) {
+				p2.x2 = p2.x2 / 2;
 			}
 			
-			
+			//matrix_write(p1.y, p1.x);
 			break;
 		
 		case release_p2:
@@ -363,11 +366,9 @@ void P2() {
 		
 		case reset_p2:
 			matrix_clear();
-			count_right_2 = 28;
-			matrix_write(1, 28); //p1 paddle in middle
-			matrix_write(8, 28); //p2 paddle in middle
-			//LCD_ClearScreen();
-			//LCD_DisplayString(1, "     SCORE:     P1: 1       P2:  0");
+			count_right = 28;
+			//matrix_write(1, 28); //p1 paddle in middle
+			//matrix_write(8, 28); //p2 paddle in middle
 			break;
 	}
 } //end player 2
@@ -395,6 +396,10 @@ void ball_init() {
 unsigned char p1_ball_check() {
 	return ball.x & p1.x;
 }
+
+unsigned char p2_ball_check() {
+	return ball.x & p2.x2;
+}
 //unsigned char p2_ball_check() {
 	//return ball.x & p2.x;
 //}
@@ -402,7 +407,7 @@ unsigned char p1_ball_check() {
 unsigned char ball_column_index = 5;
 unsigned char ball_row_index = 8;
 
-enum ball_movement{init_ball, ball_start, ball_vertical/*, ball_hit*/} ball_state;
+enum ball_movement{init_ball, ball_start, ball_vertical/*, ball_tr, ball_tl, ball_br, ball_bl*/} ball_state; //top right, bottom right, etc...
 
 void Ball() {
 	
@@ -469,7 +474,15 @@ void Ball() {
 				}
 				if (ball.y >= 7)
 				{
-					ball.direction = 0;
+					if(p2_ball_check()) 
+					{
+						ball.direction = 0;
+					}
+					else if(ball.y == 8)
+					{
+						matrix_write(ball.y, 0);
+						ball_init();
+					}
 				}
 				break;
 		
@@ -477,7 +490,9 @@ void Ball() {
 	
 } //end ball
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 enum led_matrix{init_led, update} led_state;
+	
 void display()
 {
 	switch(led_state) {
@@ -496,11 +511,12 @@ void display()
 		
 		case update:
 				 matrix_write(p1.y, p1.x); //p1 paddle in middle
+				 matrix_write(p2.y2, p2.x2);
 				 matrix_write(ball.y, ball.x); //p2 paddle in middle
 				 break;
 	}
-}
-
+} //end display
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(void)
 {
