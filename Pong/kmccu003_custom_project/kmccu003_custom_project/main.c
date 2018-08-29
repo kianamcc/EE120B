@@ -137,16 +137,41 @@ void Menu() {
 			 	LCD_ClearScreen();
 			 	LCD_DisplayString(1, "PLAYER 1 WINS!");
 			 	win = 1;
-			 	//matrix_clear();
-			 	//disp_flag = 0;
+				 
+				/*unsigned char customChar[8] = {
+					 	0b00000,
+					 	0b00000,
+					 	0b01010,
+					 	0b01010,
+					 	0b10001,
+					 	0b01110,
+					 	0b00000,
+					 	0b00000
+				 	};
+						
+				 	LCD_Char(0, customChar);*/
+
 		 	}
 		 					
 		 	if (p2_score == 7) {
 			 	LCD_ClearScreen();
 			 	LCD_DisplayString(1, "PLAYER 2 WINS!");
+				 
+				 	     /*unsigned char customChar[8] = {
+					 	     0b00000,
+					 	     0b00000,
+					 	     0b01010,
+					 	     0b01010,
+					 	     0b10001,
+					 	     0b01110,
+					 	     0b00000,
+					 	     0b00000
+				 	     };
+						
+				 	     LCD_Char(0, customChar);*/
+
+						  
 			 	win = 1;
-			 	//matrix_clear();
-			 	//disp_flag = 0;
 		 	}
 			if (button)
 			{
@@ -759,7 +784,7 @@ void Ball() {
 						}
 						
 						else if(p1.xr == ball.x) {
-							if(p1.xr != 128) { //move vertical when paddle not moving
+							if(p1.xr != 128) { //move vertical when m
 								ball.direction = 2; //right up
 							}
 							else if (p1.xr == 128) {
@@ -879,10 +904,9 @@ int main(void)
 	
 	TimerSet(50);
 	TimerOn();
-	
+
    // Initializes the LCD display
    LCD_init();
-   
    
    while(1) {
 	   
@@ -899,6 +923,7 @@ int main(void)
 	   ball_timer += 50;
 	   
 	   display();
+	   
 	   
 		while (!TimerFlag);
 		TimerFlag = 0;
