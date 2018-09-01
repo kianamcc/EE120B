@@ -1,8 +1,7 @@
-/*
- * kmccu003_custom_project.c
- *
- * Created: 8/22/2018 12:40:56 PM
- */ 
+/*    Author : Kiana McCullough
+ *    Lab Section: B21
+ *    Custom Project: Pong
+ */
 
 #include <avr/io.h>
 
@@ -12,7 +11,6 @@
 #include "matrix.h"
 #include "bit.h"
 #include "math.h"
-//#include "LiquidCrystal.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned char button = 0x00;
@@ -121,16 +119,11 @@ void Menu() {
 			{
 				menu = play;
 			}
-			/*else if(win == 1) {
-				win = 0; //reset
-				menu = init;
-			}*/
-			
 			break;
 			
 		case matrix:
 			menu = play;
-		   break;
+			break;
 		  
 		 case gameover:
 		 	if (p1_score == 7) {
@@ -184,7 +177,6 @@ void Menu() {
 			break;
 		 
 		 case reset:
-			//matrix_clear();
 			menu = init;
 			break;
 		   
@@ -228,24 +220,6 @@ void Menu() {
 			
 			break;
 		   
-		   //case gameover:
-					//if (p1_score == 7) {
-						//LCD_ClearScreen();
-						//LCD_DisplayString(1, "PLAYER 1 WINS!");
-						//win = 1;
-						////matrix_clear();
-						////disp_flag = 0;
-					//}
-					//
-					//if (p2_score == 7) {
-						//LCD_ClearScreen();
-						//LCD_DisplayString(1, "PLAYER 2 WINS!");
-						//win = 1;
-						////matrix_clear();
-						////disp_flag = 0;
-					//}
-					//break;
-		   
 			case reset:
 				
 				LCD_ClearScreen();
@@ -268,22 +242,6 @@ void Menu() {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//struct p1_struct { //type of struct
-	//
-	//unsigned char y; //coordinates
-	//unsigned char x;
-	//unsigned char xr; //right x coordinate
-	//unsigned char xl; //left x coordinate
-	//
-//} p1;
-//
-//void p1_init() {
-	//p1.y = 1;
-	//p1.x = 28;
-	//p1.xr = 16; //multiply by 2 each time paddle moves right and divide by two when it moves left
-	//p1.xl = 4;
-//}
-
 unsigned char button_right = 0x00;
 unsigned char button_left = 0x00;
 //unsigned char reset_button = 0x00;
@@ -293,8 +251,6 @@ enum player_1{init_p1, wait_p1, press_p1, right_press, left_press, release_p1} p
 
 void P1() {
 	
-	//count_right = 28;
-	//reset_button = ~PINC & 0x01; //C0
 	button_right = ~PINC & 0x02; //C1
 	button_left = ~PINC & 0x04; //C2
 	
@@ -328,44 +284,22 @@ void P1() {
 			{
 				p1_state = init_p1;
 			}
-			//else if(reset_button) {
-				//p1_state = reset;
-			//}
-			
 			break;
 			
 		case right_press: //execute command then go straight to release
-		
-			//if(reset_button) {
-				//p1_state = reset;
-			//}
-			
-			//else {
 				p1_state = release_p1;
 				break;
-			//}
 			
 		case left_press:
-		
-			//if(reset_button) {
-				//p1_state = reset;
-			//}
-			
-			//else {
 				p1_state = release_p1;
 				break;
-			//}
-		
+
 		case release_p1: //wait for next press
 
 			if(!button_right && !button_left) { //released
 				p1_state = press_p1;
 			}
-			
-			//else if(reset_button) {
-				//p1_state = reset;
-			//}
-			
+
 			else {
 				p1_state = release_p1;
 			}
@@ -379,19 +313,12 @@ void P1() {
 			else if(!button_right && button_left) { //left
 				p1_state = left_press;
 			}
-			
-			//else if(reset_button) {
-				//p1_state = reset;
-			//}
+
 			else {
 				p1_state = press_p1;
 			}
 			break;
-		
-		//case reset:
-			//p1_state = wait_p1;
-			//break;
-			//
+
 		default:
 			p1_state = init_p1;
 			break;
@@ -433,42 +360,15 @@ void P1() {
 		
 		case release_p1:
 			break;
-		
-		//case reset: 
-			//matrix_clear();
-			//LCD_ClearScreen();
-			//disp_flag = 0;
-			//p1_score = 0;
-			//p2_score = 0;
-			////ball_init();
-			//count_right = 28;
-			//play_flag = 0;
-			//break;	
+
 		default:
 			break;
 	}	
 } //end player 1
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//struct p2_struct { //type of struct
-	//
-	//unsigned char y2; //coordinates
-	//unsigned char x2;
-	//unsigned char xr2;
-	//unsigned char xl2;
-	//
-//} p2;
-//
-//void p2_init() {
-	//p2.y2 = 8;
-	//p2.x2 = 28;
-	//p2.xr2 = 16; //multiply by 2 each time paddle moves right and divide by two when it moves left
-	//p2.xl2 = 4;
-//}
-
 unsigned char button_right_2 = 0x00;
 unsigned char button_left_2 = 0x00;
-//unsigned char reset_button_2 = 0x00;
 unsigned char count_right_2 = 28;
 
 
@@ -476,7 +376,6 @@ enum player_2{init_p2, wait_p2, press_p2, right_press_p2, left_press_p2, release
 
 void P2() {
 	
-	//reset_button_2 = ~PINC & 0x01; //C0
 	button_right_2 = ~PINC & 0x08; //C3
 	button_left_2 = ~PINC & 0x10; //C4
 	
@@ -507,10 +406,6 @@ void P2() {
 					p2_state = left_press_p2;
 				}
 		
-				//else if(reset_button_2) {
-					//p2_state = reset_p2;
-				//}
-				//
 			}
 			else
 			{
@@ -519,36 +414,18 @@ void P2() {
 			break;
 		
 		case right_press_p2: //execute command then go straight to release
-		//
-			//if(reset_button_2) {
-				//p2_state = reset_p2;
-			//}
-		
-			//else {
 				p2_state = release_p2;
 				break;
-			//}
 		
 		case left_press_p2:
-		
-			//if(reset_button_2) {
-				//p2_state = reset_p2;
-			//}
-		
-			//else {
 				p2_state = release_p2;
 				break;
-			//}
 		
 		case release_p2: //wait for next press
 
 			if(!button_right_2 && !button_left_2) { //released
 				p2_state = press_p2;
 			}
-		
-			//else if(reset_button_2) {
-				//p2_state = reset_p2;
-			//}
 		
 			else {
 				p2_state = release_p2;
@@ -564,18 +441,11 @@ void P2() {
 				p2_state = left_press_p2;
 			}
 			
-			//else if(reset_button_2) {
-				//p2_state = reset_p2;
-			//}
 			
 			else {
 				p2_state = press_p2;
 			}
 			break;
-		
-			//case reset_p2:
-			//p2_state = wait_p2;
-			//break;
 		
 		default:
 		p2_state = init_p2;
@@ -615,14 +485,6 @@ void P2() {
 		case release_p2:
 			break;
 		
-		//case reset_p2:
-			//matrix_clear();
-			//LCD_ClearScreen();
-			//disp_flag = 0;
-			//p1_score = 0;
-			//p2_score = 0;
-			//count_right = 28;
-			//play_flag = 0;
 		default:
 			break;
 	}
@@ -632,23 +494,6 @@ void P2() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 unsigned char ball_flag = 0;
-
-//struct ball_struct { //type of struct
-	//
-	//unsigned int direction; //0 down, 1 up, 2 right-up, 3 left-up, 4 right-down, 5 left-down
-	//unsigned char y; //coordinates
-	//unsigned char x;
-	//
-//} ball;
-//
-//void ball_init() {
-	//
-	////matrix_write(ball.x, 0);
-	//ball.direction = 0;
-	//ball.y = 5;
-	//ball.x = 8;
-	//matrix_write(ball.y, ball.x); //p2 paddle in middle
-//}
 
 unsigned char p1_ball_check() {
 	return ball.x & p1.x;
@@ -884,7 +729,6 @@ void display()
 	}
 } //end display
 
-//LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(void)
@@ -910,20 +754,17 @@ int main(void)
    
    while(1) {
 	   
-	   Menu();
+		Menu();
+		P1();
+		P2();
 	   
-	   P1();
+		if(ball_timer == 100) {
+			Ball();
+			ball_timer = 0;
+		}
+		ball_timer += 50;
 	   
-	   P2();
-	   
-	   if(ball_timer == 100) {
-		  Ball();
-		  ball_timer = 0;
-	   }
-	   ball_timer += 50;
-	   
-	   display();
-	   
+		display();
 	   
 		while (!TimerFlag);
 		TimerFlag = 0;

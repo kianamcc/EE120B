@@ -59,17 +59,15 @@ void LCD_DisplayString( unsigned char column, const unsigned char* string) {
 }
 
 void LCD_Cursor(unsigned char column) {
-   if ( column < 17 ) { // 16x1 LCD: column < 9
-						// 16x2 LCD: column < 17
+   if ( column < 17 ) { 
+	   
       LCD_WriteCommand(0x80 + column - 1);
    } else {
-      LCD_WriteCommand(0xB8 + column - 9);	// 16x1 LCD: column - 1
-											// 16x2 LCD: column - 9
+      LCD_WriteCommand(0xB8 + column - 9);	
    }
 }
 
-void delay_ms(int miliSec) //for 8 Mhz crystal
-
+void delay_ms(int miliSec)
 {
     int i,j;
     for(i=0;i<miliSec;i++)

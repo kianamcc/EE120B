@@ -17,7 +17,7 @@
 
 void MAX7219transmit_data(unsigned char data)
 {
-	for (unsigned char i = 0; i < 8; ++i, data <<= 1) //transmit byte to MAX
+	for (unsigned char i = 0; i < 8; ++i, data <<= 1)  //transmit byte to MAX
 	{
 		CLK_LOW();
 		
@@ -25,6 +25,7 @@ void MAX7219transmit_data(unsigned char data)
 		{
 			DATA_HIGH();
 		}
+		
 		else
 		{
 			DATA_LOW();
